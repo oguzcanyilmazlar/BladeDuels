@@ -73,6 +73,7 @@ public class DuelCommand {
 
         if(parameter == CreationEnum.STICK){
             sender.getInventory().addItem(MapCreationWizard.CREATION_STICK);
+            messageManager.sendMessage(MessageManager.CREATION_STICK, sender);
         }else{
             arenaManager.createMap(wizard.getSelection(sender.getUniqueId()));
             wizard.removeSelection(sender.getUniqueId());
