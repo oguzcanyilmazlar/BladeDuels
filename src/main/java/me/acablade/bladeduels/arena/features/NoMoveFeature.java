@@ -12,6 +12,9 @@ public class NoMoveFeature extends DuelFeature {
 
     @Listen
     public void onMove(PlayerMoveEvent event){
+        if(getGame().getGameData().getSpectatorList().contains(event.getPlayer().getUniqueId())){
+            return;
+        }
         Location from = event.getFrom();
         Location to = event.getTo();
         if(from.getBlockX() != to.getBlockX() || from.getBlockZ() != to.getBlockZ()){

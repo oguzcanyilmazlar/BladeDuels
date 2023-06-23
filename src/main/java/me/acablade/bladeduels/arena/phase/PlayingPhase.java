@@ -4,12 +4,14 @@ import me.acablade.bladeduels.arena.DuelGame;
 import me.acablade.bladeduels.arena.eventmiddleware.annotation.Listen;
 import me.acablade.bladeduels.arena.features.DuelFeature;
 import me.acablade.bladeduels.arena.features.NoBreakFeature;
+import me.acablade.bladeduels.manager.MessageManager;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -67,11 +69,19 @@ public class PlayingPhase extends DuelPhase {
 
         @Listen
         public void onBlockPlace(BlockPlaceEvent event){
+            if(getGame().getGameData().getSpectatorList().contains(event.getPlayer().getUniqueId())){
+                event.setCancelled(true);
+                return;
+            }
             blockSet.add(event.getBlockPlaced());
         }
 
         @Listen
         public void onBucketEmpty(PlayerBucketEmptyEvent event){
+            if(getGame().getGameData().getSpectatorList().contains(event.getPlayer().getUniqueId())){
+                event.setCancelled(true);
+                return;
+            }
             Block block = event.getBlockClicked().getRelative(event.getBlockFace());
             blockSet.add(block);
         }
@@ -81,9 +91,16 @@ public class PlayingPhase extends DuelPhase {
             if(blockSet.contains(event.getBlock())) blockSet.add(event.getToBlock());
         }
 
-        @Listen
+        @Listen(priority = EventPriority.HIGHEST)
         public void onBlockBreak(BlockBreakEvent event){
-            blockSet.remove(event.getBlock());
+            if(getGame().getGameData().getSpectatorList().contains(event.getPlayer().getUniqueId())){
+                event.setCancelled(true);
+                return;
+            }
+            if(blockSet.contains(event.getBlock())){
+                event.setCancelled(false);
+                blockSet.remove(event.getBlock());
+            }
         }
 
     }
@@ -98,6 +115,11 @@ public class PlayingPhase extends DuelPhase {
         @Listen
         public void onDeath(EntityDamageByEntityEvent event){
             if(!(event.getEntity() instanceof Player)) return;
+
+            if(getGame().getGameData().getSpectatorList().contains(event.getDamager().getUniqueId())){
+                event.setCancelled(true);
+                return;
+            }
 
             Player player = ((Player) event.getEntity()).getPlayer();
 
@@ -119,6 +141,10 @@ public class PlayingPhase extends DuelPhase {
 
         @Listen
         public void onQuit(PlayerQuitEvent event){
+            if(getGame().getGameData().getSpectatorList().contains(event.getPlayer().getUniqueId())){
+                getGame().announce(getGame().getPlugin().getMessageManager().getMessage(MessageManager.STOPPED_SPECTATING, new MessageManager.Replaceable("%player%", event.getPlayer().getName())));
+                return;
+            }
             getGame().getGameData().setWinner(Collections.singleton(getGame().getGameData().playerStream()
                     .filter(pl -> !pl.equals(event.getPlayer()))
                     .findAny()

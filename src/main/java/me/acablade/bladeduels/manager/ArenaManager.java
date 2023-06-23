@@ -64,8 +64,24 @@ public class ArenaManager {
         }
     }
 
+    public void removeArena(DuelGame duelGame){
+        this.games.remove(duelGame);
+    }
+
     public boolean isInGame(UUID uuid){
         return games.stream().anyMatch(g -> g.getGameData().getPlayerList().contains(uuid));
+    }
+
+    public boolean isSpectating(UUID uuid){
+        return games.stream().anyMatch(g -> g.getGameData().getSpectatorList().contains(uuid));
+    }
+
+    public DuelGame getSpectating(UUID uuid){
+        return games.stream().filter(g -> g.getGameData().getSpectatorList().contains(uuid)).findAny().get();
+    }
+
+    public DuelGame getGame(UUID uuid){
+        return games.stream().filter(g -> g.getGameData().getPlayerList().contains(uuid)).findAny().get();
     }
 
     public void loadMaps(){

@@ -36,13 +36,17 @@ public class MatchmakingSystem implements Runnable {
         queue.add(new MatchmakingPlayer(uuid, eloSystem.getElo(uuid), kit));
     }
 
+    public void removePlayer(UUID uuid){
+        queue.removeIf(pl -> pl.getUuid().equals(uuid));
+    }
+
     @Override
     public void run() {
         Set<MatchmakingPlayer> toRemove = new HashSet<>();
         for(MatchmakingPlayer player : queue){
             Player bukkitPlayer = Bukkit.getPlayer(player.getUuid());
             if(!bukkitPlayer.isOnline()) toRemove.add(player);
-            if(player.incrementTick() >= (20 / period) * 3){
+            if(player.incrementTick() >= (20 / period) * 5){
                 player.setTick(0);
                 if(player.getRange() < maxRange)
                     player.setRange(player.getRange() + 20);

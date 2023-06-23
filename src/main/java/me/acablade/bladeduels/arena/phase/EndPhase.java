@@ -48,13 +48,19 @@ public class EndPhase extends DuelPhase {
                 new MessageManager.Replaceable("%loser%", Bukkit.getPlayer(second).getName()),
                 new MessageManager.Replaceable("%winnerEloDiff%", String.valueOf(Math.abs(firstEloDiff))),
                 new MessageManager.Replaceable("%loserEloDiff%", String.valueOf(Math.abs(secondEloDiff))),
-                new MessageManager.Replaceable("%firstEloDiff%", String.valueOf(firstEloDiff)),
-                new MessageManager.Replaceable("%secondEloDiff%", String.valueOf(secondEloDiff)),
+                new MessageManager.Replaceable("%firstEloDiff%", eloDiff(firstEloDiff, true)),
+                new MessageManager.Replaceable("%secondEloDiff%", eloDiff(secondEloDiff, true)),
+                new MessageManager.Replaceable("%firstEloDiffColorless%", eloDiff(firstEloDiff, false)),
+                new MessageManager.Replaceable("%secondEloDiffColorless%", eloDiff(secondEloDiff, false)),
                 new MessageManager.Replaceable("%first%", Bukkit.getPlayer(first).getName()),
                 new MessageManager.Replaceable("%second%", Bukkit.getPlayer(second).getName())));
 
         eloSystem.setElo(first, firstNewElo);
         eloSystem.setElo(second, secondNewElo);
+    }
+
+    private String eloDiff(int eloDiff, boolean color){
+        return (eloDiff > 0 ? (color ? "§a":"") + "+" : (color ? "§c" : "")) + eloDiff;
     }
 
     @Override

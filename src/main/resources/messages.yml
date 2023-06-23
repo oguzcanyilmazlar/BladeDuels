@@ -17,11 +17,14 @@ INVITE:
 NO_INVITE_FOUND: "&cNo invite found"
 CREATION_STICK: "&aLeft click and right click for spawn location"
 DUEL_END_MESSAGE:
-  - "&eWinner is: %winner% &a(+%winnerEloDiff%)"
-  - "&eLoser is: %loser% &c(-%loserEloDiff%)"
+  - "&eWinner is %winner% &a(+%winnerEloDiff%)"
+  - "&eLoser is %loser% &c(-%loserEloDiff%)"
 DUEL_END_DRAW_MESSAGE:
   - "&6DRAW!"
-  - "&e%first% (%firstEloDiff%)"
-  - "&e%second% (%secondEloDiff%)"
+  - "&e%first% (%firstEloDiff%&e)"
+  - "&e%second% (%secondEloDiff%&e)"
 PLAYER_ALREADY_IN_DUEL: "&cPlayer is already in a duel"
 QUEUE: "&aSearching players between %lowbound% - %highbound% elo"
+STARTED_SPECTATING: "&a%player% started spectating"
+STOPPED_SPECTATING: "&c%player% stopped spectating"
+YOU_ARE_IN_A_GAME: "&cYou are already in a game"

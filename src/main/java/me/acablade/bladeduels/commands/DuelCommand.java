@@ -1,5 +1,6 @@
 package me.acablade.bladeduels.commands;
 
+import me.acablade.bladeduels.arena.DuelGame;
 import me.acablade.bladeduels.arena.DuelKit;
 import me.acablade.bladeduels.elo.EloSystem;
 import me.acablade.bladeduels.manager.ArenaManager;
@@ -53,14 +54,44 @@ public class DuelCommand {
 
     }
 
+    @Command("duel spectate")
+    public void duelSpectate(Player sender, Player player){
+        if(arenaManager.isInGame(sender.getUniqueId()) || arenaManager.isSpectating(sender.getUniqueId())){
+            messageManager.sendMessage(MessageManager.YOU_ARE_IN_A_GAME, sender);
+            return;
+        }
+        DuelGame game = arenaManager.getGame(player.getUniqueId());
+        if(game == null){
+            messageManager.sendMessage(MessageManager.PLAYER_NOT_IN_A_DUEL, sender);
+            return;
+        }
+
+        game.addSpectator(sender);
+
+
+    }
+
     @Command("duel queue")
     public void duelQueue(Player sender, DuelKit kit){
+        int elo = eloSystem.getElo(sender);
+        messageManager.sendMessage(MessageManager.QUEUE, sender,
+                new MessageManager.Replaceable("%lowbound%", String.valueOf(elo - 20)),
+                new MessageManager.Replaceable("%highbound%", String.valueOf(elo + 20)));
         matchmakingSystem.addPlayer(sender.getUniqueId(), kit);
     }
 
     @Command("duel exit")
     public void duelQueueExit(Player sender){
-
+        UUID senderUUID = sender.getUniqueId();
+        if(arenaManager.isSpectating(senderUUID)){
+            arenaManager.getSpectating(senderUUID).stopSpectating(sender, true, true);
+            return;
+        }
+        if(arenaManager.isInGame(senderUUID)){
+            arenaManager.getGame(senderUUID).leave(sender);
+            return;
+        }
+        matchmakingSystem.removePlayer(senderUUID);
     }
 
     @Command("duel accept")

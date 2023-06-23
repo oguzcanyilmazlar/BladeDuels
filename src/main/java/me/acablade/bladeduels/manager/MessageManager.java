@@ -1,12 +1,10 @@
 package me.acablade.bladeduels.manager;
 
 import lombok.Data;
-import me.acablade.bladeduels.BladeDuels;
 import me.acablade.bladeduels.utils.ConfigurationFile;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -35,6 +33,10 @@ public class MessageManager {
     public static final Message DUEL_END_DRAW_MESSAGE = new Message("DUEL_END_DRAW_MESSAGE");
     public static final Message PLAYER_ALREADY_IN_DUEL = new Message("PLAYER_ALREADY_IN_DUEL");
     public static final Message QUEUE = new Message("QUEUE");
+    public static final Message PLAYER_NOT_IN_A_DUEL = new Message("PLAYER_NOT_IN_A_DUEL");
+    public static final Message STARTED_SPECTATING = new Message("STARTED_SPECTATING");
+    public static final Message STOPPED_SPECTATING = new Message("STOPPED_SPECTATING");
+    public static final Message YOU_ARE_IN_A_GAME = new Message("YOU_ARE_IN_A_GAME");
 
 
 
