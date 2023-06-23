@@ -64,6 +64,10 @@ public class ArenaManager {
         }
     }
 
+    public boolean isInGame(UUID uuid){
+        return games.stream().anyMatch(g -> g.getGameData().getPlayerList().contains(uuid));
+    }
+
     public void loadMaps(){
         for (String key: mapFile.getConfiguration().getKeys(false)){
             ConfigurationSection section = mapFile.getConfiguration().getConfigurationSection(key);

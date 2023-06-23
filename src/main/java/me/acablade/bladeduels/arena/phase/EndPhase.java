@@ -4,6 +4,8 @@ import me.acablade.bladeduels.arena.DuelGame;
 import me.acablade.bladeduels.arena.features.NoBreakFeature;
 import me.acablade.bladeduels.arena.features.NoPvPFeature;
 import me.acablade.bladeduels.elo.EloSystem;
+import me.acablade.bladeduels.manager.MessageManager;
+import org.bukkit.Bukkit;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -20,9 +22,11 @@ public class EndPhase extends DuelPhase {
         super.onEnable();
         UUID first;
         float actualFirstScore = 1.0f;
+        MessageManager.Message message = MessageManager.DUEL_END_MESSAGE;
         if(getGame().getGameData().getWinner().isEmpty()){
             first = getGame().getGameData().getPlayerList().toArray(new UUID[0])[0];
             actualFirstScore = 0.5f;
+            message = MessageManager.DUEL_END_DRAW_MESSAGE;
         }else{
             first = getGame().getGameData().getWinner().toArray(new UUID[0])[0];
         }
@@ -35,11 +39,22 @@ public class EndPhase extends DuelPhase {
         int firstNewElo = eloSystem.getNewElo(first, scorings[0], actualFirstScore);
         int secondNewElo = eloSystem.getNewElo(second, scorings[1], 1f - actualFirstScore);
 
+        int firstEloDiff = firstNewElo - eloSystem.getElo(first);
+        int secondEloDiff = secondNewElo - eloSystem.getElo(second);
+
+
+        getGame().announce(getGame().getPlugin().getMessageManager().getMessage(message,
+                new MessageManager.Replaceable("%winner%", Bukkit.getPlayer(first).getName()),
+                new MessageManager.Replaceable("%loser%", Bukkit.getPlayer(second).getName()),
+                new MessageManager.Replaceable("%winnerEloDiff%", String.valueOf(Math.abs(firstEloDiff))),
+                new MessageManager.Replaceable("%loserEloDiff%", String.valueOf(Math.abs(secondEloDiff))),
+                new MessageManager.Replaceable("%firstEloDiff%", String.valueOf(firstEloDiff)),
+                new MessageManager.Replaceable("%secondEloDiff%", String.valueOf(secondEloDiff)),
+                new MessageManager.Replaceable("%first%", Bukkit.getPlayer(first).getName()),
+                new MessageManager.Replaceable("%second%", Bukkit.getPlayer(second).getName())));
 
         eloSystem.setElo(first, firstNewElo);
         eloSystem.setElo(second, secondNewElo);
-
-
     }
 
     @Override

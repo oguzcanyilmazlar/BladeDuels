@@ -6,10 +6,8 @@ import me.acablade.bladeduels.commands.DuelCommand;
 import me.acablade.bladeduels.elo.EloSystem;
 import me.acablade.bladeduels.exception.DuelExceptionAdapter;
 import me.acablade.bladeduels.exception.InvalidKitException;
-import me.acablade.bladeduels.manager.ArenaManager;
-import me.acablade.bladeduels.manager.InvitationManager;
-import me.acablade.bladeduels.manager.KitManager;
-import me.acablade.bladeduels.manager.MessageManager;
+import me.acablade.bladeduels.manager.*;
+import me.acablade.bladeduels.matchmaking.MatchmakingSystem;
 import me.acablade.bladeduels.wizard.MapCreationWizard;
 import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.bukkit.BukkitCommandHandler;
@@ -23,6 +21,8 @@ public final class BladeDuels extends JavaPlugin {
     private MessageManager messageManager;
     private InvitationManager invitationManager;
     private MapCreationWizard mapCreationWizard;
+    private RollbackManager rollbackManager;
+    private MatchmakingSystem matchmakingSystem;
 
 
     @Override
@@ -35,8 +35,13 @@ public final class BladeDuels extends JavaPlugin {
         messageManager = new MessageManager(this);
         invitationManager = new InvitationManager();
         mapCreationWizard = new MapCreationWizard();
+        rollbackManager = new RollbackManager();
+        matchmakingSystem = new MatchmakingSystem(arenaManager, eloSystem, messageManager, 5);
+
+        getServer().getScheduler().runTaskTimer(this, matchmakingSystem, 0, matchmakingSystem.getPeriod());
 
         kitManager.loadKits();
+        getLogger().info("-------------------------");
         arenaManager.loadMaps();
         getServer().getPluginManager().registerEvents(mapCreationWizard, this);
 
@@ -47,6 +52,7 @@ public final class BladeDuels extends JavaPlugin {
         commandHandler.registerDependency(EloSystem.class, eloSystem);
         commandHandler.registerDependency(InvitationManager.class, invitationManager);
         commandHandler.registerDependency(MapCreationWizard.class, mapCreationWizard);
+        commandHandler.registerDependency(MatchmakingSystem.class, matchmakingSystem);
         commandHandler.registerValueResolver(DuelKit.class, valueResolverContext -> {
             String value = valueResolverContext.pop();
             if(!kitManager.getKits().containsKey(value)) throw new InvalidKitException(valueResolverContext.parameter(), value);

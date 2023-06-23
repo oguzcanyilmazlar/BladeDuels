@@ -16,3 +16,12 @@ INVITE:
   - "  &r- &eKit&7: &a%kit%"
 NO_INVITE_FOUND: "&cNo invite found"
 CREATION_STICK: "&aLeft click and right click for spawn location"
+DUEL_END_MESSAGE:
+  - "&eWinner is: %winner% &a(+%winnerEloDiff%)"
+  - "&eLoser is: %loser% &c(-%loserEloDiff%)"
+DUEL_END_DRAW_MESSAGE:
+  - "&6DRAW!"
+  - "&e%first% (%firstEloDiff%)"
+  - "&e%second% (%secondEloDiff%)"
+PLAYER_ALREADY_IN_DUEL: "&cPlayer is already in a duel"
+QUEUE: "&aSearching players between %lowbound% - %highbound% elo"

@@ -61,7 +61,7 @@ public class KitManager {
         section.set("inventoryBase64", InventorySerialization.toBase64(kit.getInventoryContents()));
         section.set("armorBase64", InventorySerialization.toBase64(kit.getArmorContents()));
         kitConfig.save();
-        logger.info(String.format("Kit named %s has been loaded", name));
+        logger.info(String.format("%s kit loaded", name));
         this.kits.put(name, kit);
     }
 

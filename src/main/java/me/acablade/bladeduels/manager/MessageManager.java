@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,10 @@ public class MessageManager {
     public static final Message INVITE = new Message("INVITE");
     public static final Message NO_INVITE_FOUND = new Message("NO_INVITE_FOUND");
     public static final Message CREATION_STICK = new Message("CREATION_STICK");
+    public static final Message DUEL_END_MESSAGE = new Message("DUEL_END_MESSAGE");
+    public static final Message DUEL_END_DRAW_MESSAGE = new Message("DUEL_END_DRAW_MESSAGE");
+    public static final Message PLAYER_ALREADY_IN_DUEL = new Message("PLAYER_ALREADY_IN_DUEL");
+    public static final Message QUEUE = new Message("QUEUE");
 
 
 
@@ -41,12 +46,21 @@ public class MessageManager {
     }
 
     public void sendMessage(Message message, CommandSender player, Replaceable... replaceables){
+        for(String msg : getMessage(message, replaceables)){
+            player.sendMessage(msg);
+        }
+    }
+
+    public List<String> getMessage(Message message, Replaceable... replaceables){
         YamlConfiguration config = messageConfig.getConfiguration();
         String key = message.getKey();
 
+
+        List<String> msg = new ArrayList<>();
+
         if(!config.contains(key)){
-            player.sendMessage("§cMessage with key \""+message.getKey()+"\" not found, contact admins.");
-            return;
+            msg.add("§cMessage with key \""+message.getKey()+"\" not found, contact admins.");
+            return msg;
         }
 
         if(config.isList(key)){
@@ -57,16 +71,17 @@ public class MessageManager {
                 }
                 return ChatColor.translateAlternateColorCodes('&', s);
             }).collect(Collectors.toList());
-            msgsEdited.forEach(player::sendMessage);
+            msg.addAll(msgsEdited);
         }else{
-            String msg = config.getString(key);
+            String msgS = config.getString(key);
             for (Replaceable replaceable: replaceables){
-                msg = msg.replaceAll(replaceable.getToReplace(), replaceable.getReplace());
+                msgS = msgS.replaceAll(replaceable.getToReplace(), replaceable.getReplace());
             }
-            msg = ChatColor.translateAlternateColorCodes('&', msg);
-            player.sendMessage(msg);
+            msgS = ChatColor.translateAlternateColorCodes('&', msgS);
+            msg.add(msgS);
         }
 
+        return msg;
     }
 
     @Data

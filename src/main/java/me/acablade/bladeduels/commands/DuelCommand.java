@@ -6,6 +6,7 @@ import me.acablade.bladeduels.manager.ArenaManager;
 import me.acablade.bladeduels.manager.InvitationManager;
 import me.acablade.bladeduels.manager.KitManager;
 import me.acablade.bladeduels.manager.MessageManager;
+import me.acablade.bladeduels.matchmaking.MatchmakingSystem;
 import me.acablade.bladeduels.wizard.MapCreationWizard;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
@@ -18,18 +19,13 @@ import java.util.UUID;
 
 public class DuelCommand {
 
-    @Dependency
-    private ArenaManager arenaManager;
-    @Dependency
-    private MessageManager messageManager;
-    @Dependency
-    private KitManager kitManager;
-    @Dependency
-    private EloSystem eloSystem;
-    @Dependency
-    private InvitationManager invitationManager;
-    @Dependency
-    private MapCreationWizard wizard;
+    @Dependency private ArenaManager arenaManager;
+    @Dependency private MessageManager messageManager;
+    @Dependency private KitManager kitManager;
+    @Dependency private EloSystem eloSystem;
+    @Dependency private InvitationManager invitationManager;
+    @Dependency private MapCreationWizard wizard;
+    @Dependency private MatchmakingSystem matchmakingSystem;
 
 
     @Command("duel invite")
@@ -37,6 +33,11 @@ public class DuelCommand {
 
         if(sender.equals(sent)){
             messageManager.sendMessage(MessageManager.CANT_DUEL_SELF, sender);
+            return;
+        }
+
+        if(arenaManager.isInGame(sent.getUniqueId())){
+            messageManager.sendMessage(MessageManager.PLAYER_ALREADY_IN_DUEL, sender);
             return;
         }
 
@@ -49,6 +50,16 @@ public class DuelCommand {
                     new MessageManager.Replaceable("%elo%", String.valueOf(eloSystem.getElo(sender))));
         }
 
+
+    }
+
+    @Command("duel queue")
+    public void duelQueue(Player sender, DuelKit kit){
+        matchmakingSystem.addPlayer(sender.getUniqueId(), kit);
+    }
+
+    @Command("duel exit")
+    public void duelQueueExit(Player sender){
 
     }
 
